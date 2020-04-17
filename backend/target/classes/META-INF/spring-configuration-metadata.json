@@ -1,0 +1,109 @@
+{
+  "groups": [
+    {
+      "name": "kafka",
+      "type": "kafdrop.config.KafkaConfiguration",
+      "sourceType": "kafdrop.config.KafkaConfiguration"
+    },
+    {
+      "name": "kafkaconnect",
+      "type": "kafdrop.config.KafkaConnectConfiguration$KafkaConnectProperties",
+      "sourceType": "kafdrop.config.KafkaConnectConfiguration$KafkaConnectProperties"
+    },
+    {
+      "name": "message",
+      "type": "kafdrop.config.MessageFormatConfiguration$MessageFormatProperties",
+      "sourceType": "kafdrop.config.MessageFormatConfiguration$MessageFormatProperties"
+    },
+    {
+      "name": "protobufdesc",
+      "type": "kafdrop.config.ProtobufDescriptorConfiguration$ProtobufDescriptorProperties",
+      "sourceType": "kafdrop.config.ProtobufDescriptorConfiguration$ProtobufDescriptorProperties"
+    },
+    {
+      "name": "schemaregistry",
+      "type": "kafdrop.config.SchemaRegistryConfiguration$SchemaRegistryProperties",
+      "sourceType": "kafdrop.config.SchemaRegistryConfiguration$SchemaRegistryProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "kafka.broker-connect",
+      "type": "java.lang.String",
+      "sourceType": "kafdrop.config.KafkaConfiguration"
+    },
+    {
+      "name": "kafka.is-secured",
+      "type": "java.lang.Boolean",
+      "sourceType": "kafdrop.config.KafkaConfiguration",
+      "defaultValue": false
+    },
+    {
+      "name": "kafka.keystore-file",
+      "type": "java.lang.String",
+      "sourceType": "kafdrop.config.KafkaConfiguration"
+    },
+    {
+      "name": "kafka.properties-file",
+      "type": "java.lang.String",
+      "sourceType": "kafdrop.config.KafkaConfiguration"
+    },
+    {
+      "name": "kafka.sasl-mechanism",
+      "type": "java.lang.String",
+      "sourceType": "kafdrop.config.KafkaConfiguration"
+    },
+    {
+      "name": "kafka.security-protocol",
+      "type": "java.lang.String",
+      "sourceType": "kafdrop.config.KafkaConfiguration"
+    },
+    {
+      "name": "kafka.truststore-file",
+      "type": "java.lang.String",
+      "sourceType": "kafdrop.config.KafkaConfiguration"
+    },
+    {
+      "name": "kafkaconnect.connect",
+      "type": "java.lang.String",
+      "sourceType": "kafdrop.config.KafkaConnectConfiguration$KafkaConnectProperties"
+    },
+    {
+      "name": "kafkaconnect.connect-port",
+      "type": "java.lang.Integer",
+      "sourceType": "kafdrop.config.KafkaConnectConfiguration$KafkaConnectProperties",
+      "defaultValue": 80
+    },
+    {
+      "name": "message.format",
+      "type": "kafdrop.util.MessageFormat",
+      "sourceType": "kafdrop.config.MessageFormatConfiguration$MessageFormatProperties"
+    },
+    {
+      "name": "protobufdesc.desc-files-list",
+      "type": "java.util.List<java.lang.String>",
+      "sourceType": "kafdrop.config.ProtobufDescriptorConfiguration$ProtobufDescriptorProperties"
+    },
+    {
+      "name": "protobufdesc.directory",
+      "type": "java.lang.String",
+      "sourceType": "kafdrop.config.ProtobufDescriptorConfiguration$ProtobufDescriptorProperties"
+    },
+    {
+      "name": "schemaregistry.auth",
+      "type": "java.lang.String",
+      "sourceType": "kafdrop.config.SchemaRegistryConfiguration$SchemaRegistryProperties"
+    },
+    {
+      "name": "schemaregistry.connect",
+      "type": "java.lang.String",
+      "sourceType": "kafdrop.config.SchemaRegistryConfiguration$SchemaRegistryProperties"
+    },
+    {
+      "name": "schemaregistry.connect-list",
+      "type": "java.util.List<java.lang.String>",
+      "sourceType": "kafdrop.config.SchemaRegistryConfiguration$SchemaRegistryProperties"
+    }
+  ],
+  "hints": []
+}
