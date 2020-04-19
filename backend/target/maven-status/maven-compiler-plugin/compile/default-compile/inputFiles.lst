@@ -14,7 +14,7 @@
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/config/HealthCheckConfiguration.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/model/ConnectorStatusVO.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/config/ini/IniFileReader.java
-/Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/config/KafkaConfigurationException.java
+/Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/exception/KafkaConfigurationException.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/controller/MessageController.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/model/TopicPartitionVO.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/util/MessageFormat.java
@@ -24,9 +24,7 @@
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/exception/ConsumerNotFoundException.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/controller/AclController.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/exception/KafkaExceptionHandler.java
-/Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/controller/BasicErrorController.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/config/ProtobufDescriptorConfiguration.java
-/Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/service/KafkaAdminClientException.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/config/KafkaConfiguration.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/config/KafkaConnectConfiguration.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/util/MessageDeserializer.java
@@ -35,6 +33,7 @@
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/util/ProtobufMessageDeserializer.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/model/TopicVO.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/config/SwaggerConfiguration.java
+/Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/exception/KafkaAdminClientException.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/util/DeserializationException.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/controller/BrokerController.java
 /Users/andrewgarrett/development/stoker/backend/src/main/java/kafdrop/util/ByteUtils.java
