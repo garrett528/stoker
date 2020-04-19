@@ -24,15 +24,11 @@ import io.swagger.annotations.ApiResponses;
 import kafdrop.model.AclVO;
 import kafdrop.service.KafkaMonitor;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 public final class AclController {
   private final KafkaMonitor kafkaMonitor;
 
@@ -40,19 +36,11 @@ public final class AclController {
     this.kafkaMonitor = kafkaMonitor;
   }
 
-  @RequestMapping("/acl")
-  public String acls(Model model) {
-    final var acls = kafkaMonitor.getAcls();
-    model.addAttribute("acls", acls);
-
-    return "acl-overview";
-  }
-
   @ApiOperation(value = "getAllAcls", notes = "Get list of all acls")
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Success", response = String.class, responseContainer = "List")
   })
-  @RequestMapping(path = "/acl", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+  @GetMapping(path = "/acl", produces = MediaType.APPLICATION_JSON_VALUE)
   public @ResponseBody List<AclVO> getAllTopics() {
     return kafkaMonitor.getAcls();
   }

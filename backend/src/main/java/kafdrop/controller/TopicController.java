@@ -23,13 +23,12 @@ import kafdrop.exception.TopicNotFoundException;
 import kafdrop.model.*;
 import kafdrop.service.*;
 import org.springframework.http.*;
-import org.springframework.stereotype.*;
 import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-@Controller
+@RestController
 @RequestMapping("/topic")
 public final class TopicController {
   private final KafkaMonitor kafkaMonitor;
@@ -38,54 +37,33 @@ public final class TopicController {
     this.kafkaMonitor = kafkaMonitor;
   }
 
-  @RequestMapping("/{name:.+}")
-  public String topicDetails(@PathVariable("name") String topicName, Model model) {
-    final var topic = kafkaMonitor.getTopic(topicName)
-        .orElseThrow(() -> new TopicNotFoundException(topicName));
-    model.addAttribute("topic", topic);
-    model.addAttribute("consumers", kafkaMonitor.getConsumers(Collections.singleton(topic)));
-
-    return "topic-detail";
-  }
-
-  /**
-   * Topic create page
-   * @param model
-   * @return creation page
-   */
-  @RequestMapping("/create")
-  public String createTopicPage(Model model) {
-    model.addAttribute("brokersCount", kafkaMonitor.getBrokers().size());
-    return "topic-create";
-  }
-
   @ApiOperation(value = "getTopic", notes = "Get details for a topic")
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Success", response = TopicVO.class),
       @ApiResponse(code = 404, message = "Invalid topic name")
   })
-  @RequestMapping(path = "/{name:.+}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-  public @ResponseBody TopicVO getTopic(@PathVariable("name") String topicName) {
+  @GetMapping(path = "/{name:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public TopicVO getTopic(@PathVariable("name") String topicName) {
     return kafkaMonitor.getTopic(topicName)
         .orElseThrow(() -> new TopicNotFoundException(topicName));
   }
 
   @ApiOperation(value = "getAllTopics", notes = "Get list of all topics")
   @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "Success", response = String.class, responseContainer = "List")
+      @ApiResponse(code = 200, message = "Success", response = TopicVO.class, responseContainer = "List")
   })
-  @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-  public @ResponseBody List<TopicVO> getAllTopics() {
+  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+  public List<TopicVO> getAllTopics() {
     return kafkaMonitor.getTopics();
   }
 
   @ApiOperation(value = "getConsumers", notes = "Get consumers for a topic")
   @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "Success", response = String.class, responseContainer = "List"),
+      @ApiResponse(code = 200, message = "Success", response = ConsumerVO.class, responseContainer = "List"),
       @ApiResponse(code = 404, message = "Invalid topic name")
   })
-  @RequestMapping(path = "/{name:.+}/consumers", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-  public @ResponseBody List<ConsumerVO> getConsumers(@PathVariable("name") String topicName) {
+  @GetMapping(path = "/{name:.+}/consumers", produces = MediaType.APPLICATION_JSON_VALUE)
+  public List<ConsumerVO> getConsumers(@PathVariable("name") String topicName) {
     final var topic = kafkaMonitor.getTopic(topicName)
         .orElseThrow(() -> new TopicNotFoundException(topicName));
     return kafkaMonitor.getConsumers(Collections.singleton(topic));
@@ -97,17 +75,16 @@ public final class TopicController {
    */
   @ApiOperation(value = "createTopic", notes = "Create topic")
   @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "Success", response = String.class)
+      @ApiResponse(code = 201, message = "Success", response = ResponseEntity.class),
+      @ApiResponse(code = 400, message = "Error", response = ResponseEntity.class)
   })
   @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-  public String createTopic(CreateTopicVO createTopicVO, Model model) {
+  public ResponseEntity<String> createTopic(@RequestBody CreateTopicVO createTopicVO, Model model) {
       try {
         kafkaMonitor.createTopic(createTopicVO);
       } catch (Exception ex) {
-        model.addAttribute("errorMessage", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("error: " + ex.getMessage());
       }
-      model.addAttribute("brokersCount", kafkaMonitor.getBrokers().size());
-      model.addAttribute("topicName", createTopicVO.getName());
-      return "topic-create";
+      return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 }

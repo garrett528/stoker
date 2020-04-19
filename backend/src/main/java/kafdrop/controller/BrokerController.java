@@ -23,13 +23,11 @@ import kafdrop.exception.BrokerNotFoundException;
 import kafdrop.model.*;
 import kafdrop.service.*;
 import org.springframework.http.*;
-import org.springframework.stereotype.*;
-import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-@Controller
+@RestController
 public final class BrokerController {
   private final KafkaMonitor kafkaMonitor;
 
@@ -37,21 +35,13 @@ public final class BrokerController {
     this.kafkaMonitor = kafkaMonitor;
   }
 
-  @RequestMapping("/broker/{id}")
-  public String brokerDetails(@PathVariable("id") int brokerId, Model model) {
-    model.addAttribute("broker", kafkaMonitor.getBroker(brokerId)
-        .orElseThrow(() -> new BrokerNotFoundException("No such broker " + brokerId)));
-    model.addAttribute("topics", kafkaMonitor.getTopics());
-    return "broker-detail";
-  }
-
   @ApiOperation(value = "getBroker", notes = "Get details for a specific Kafka broker")
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Success", response = BrokerVO.class),
       @ApiResponse(code = 404, message = "Invalid Broker ID")
   })
-  @RequestMapping(path = "/broker/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-  public @ResponseBody BrokerVO brokerDetailsJson(@PathVariable("id") int brokerId) {
+  @GetMapping(path = "/broker/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public BrokerVO brokerDetailsJson(@PathVariable("id") int brokerId) {
     return kafkaMonitor.getBroker(brokerId).orElseThrow(() -> new BrokerNotFoundException("No such broker " + brokerId));
   }
 
@@ -59,8 +49,8 @@ public final class BrokerController {
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Success", response = BrokerVO.class)
   })
-  @RequestMapping(path = "/broker", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-  public @ResponseBody List<BrokerVO> brokerDetailsJson() {
+  @GetMapping(path = "/broker", produces = MediaType.APPLICATION_JSON_VALUE)
+  public List<BrokerVO> brokerDetailsJson() {
     return kafkaMonitor.getBrokers();
   }
 }

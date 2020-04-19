@@ -23,22 +23,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -64,7 +54,7 @@ import kafdrop.util.MessageDeserializer;
 import kafdrop.util.MessageFormat;
 import kafdrop.util.ProtobufMessageDeserializer;
 
-@Controller
+@RestController
 public final class MessageController {
   private final KafkaMonitor kafkaMonitor;
 
@@ -87,21 +77,20 @@ public final class MessageController {
   /**
    * Human friendly view of reading all topic messages sorted by timestamp.
    * @param topicName Name of topic
-   * @param model
    * @return View for seeing all messages in a topic sorted by timestamp.
    */
   @GetMapping("/topic/{name:.+}/allmessages")
-  public String viewAllMessages(@PathVariable("name") String topicName,
-                                Model model, @RequestParam(name = "count", required = false) Integer count) {
+  @ApiOperation(value = "getAllMessages", notes = "Get all topic messages")
+  @ApiResponses(value = {
+          @ApiResponse(code = 200, message = "Success", response = List.class),
+          @ApiResponse(code = 404, message = "Invalid topic name")
+  })
+  public List<MessageVO> viewAllMessages(@PathVariable("name") String topicName,
+                                         @RequestParam(name = "count", required = false) Integer count) {
     final int size = (count != null? count : 100);
     final MessageFormat defaultFormat = messageFormatProperties.getFormat();
     final TopicVO topic = kafkaMonitor.getTopic(topicName)
         .orElseThrow(() -> new TopicNotFoundException(topicName));
-
-    model.addAttribute("topic", topic);
-    model.addAttribute("defaultFormat", defaultFormat);
-    model.addAttribute("messageFormats", MessageFormat.values());
-    model.addAttribute("descFiles", protobufProperties.getDescFilesList());
 
     final var deserializer = getDeserializer(topicName, defaultFormat, "", "");
     final List<MessageVO> messages = messageInspector.getMessages(topicName, size, deserializer);
@@ -115,58 +104,7 @@ public final class MessageController {
     }
 
     messages.sort(Comparator.comparing(MessageVO::getTimestamp));
-    model.addAttribute("messages", messages);
-
-    return "topic-messages";
-  }
-
-  /**
-   * Human friendly view of reading messages.
-   * @param topicName Name of topic
-   * @param messageForm Message form for submitting requests to view messages.
-   * @param errors
-   * @param model
-   * @return View for seeing messages in a partition.
-   */
-  @GetMapping("/topic/{name:.+}/messages")
-  public String viewMessageForm(@PathVariable("name") String topicName,
-                                @Valid @ModelAttribute("messageForm") PartitionOffsetInfo messageForm,
-                                BindingResult errors,
-                                Model model) {
-    final MessageFormat defaultFormat = messageFormatProperties.getFormat();
-
-    if (messageForm.isEmpty()) {
-      final PartitionOffsetInfo defaultForm = new PartitionOffsetInfo();
-
-      defaultForm.setCount(100l);
-      defaultForm.setOffset(0l);
-      defaultForm.setPartition(0);
-      defaultForm.setFormat(defaultFormat);
-
-      model.addAttribute("messageForm", defaultForm);
-    }
-
-    final TopicVO topic = kafkaMonitor.getTopic(topicName)
-        .orElseThrow(() -> new TopicNotFoundException(topicName));
-    model.addAttribute("topic", topic);
-
-    model.addAttribute("defaultFormat", defaultFormat);
-    model.addAttribute("messageFormats", MessageFormat.values());
-    model.addAttribute("descFiles", protobufProperties.getDescFilesList());
-
-    if (!messageForm.isEmpty() && !errors.hasErrors()) {
-      final var deserializer = getDeserializer(topicName, messageForm.getFormat(), messageForm.getDescFile(), messageForm.getMsgTypeName());
-
-      model.addAttribute("messages",
-                         messageInspector.getMessages(topicName,
-                                                      messageForm.getPartition(),
-                                                      messageForm.getOffset(),
-                                                      messageForm.getCount().intValue(),
-                                                      deserializer));
-
-    }
-
-    return "message-inspector";
+    return messages;
   }
 
   /**
@@ -181,9 +119,8 @@ public final class MessageController {
       @ApiResponse(code = 200, message = "Success", response = List.class),
       @ApiResponse(code = 404, message = "Invalid topic name")
   })
-  @RequestMapping(method = RequestMethod.GET, value = "/topic/{name:.+}/messages", produces = MediaType.APPLICATION_JSON_VALUE)
-  public @ResponseBody
-  List<Object> getPartitionOrMessages(
+  @GetMapping(value = "/topic/{name:.+}/messages", produces = MediaType.APPLICATION_JSON_VALUE)
+  public List<Object> getPartitionOrMessages(
       @PathVariable("name") String topicName,
       @RequestParam(name = "partition", required = false) Integer partition,
       @RequestParam(name = "offset", required = false) Long offset,
@@ -222,7 +159,6 @@ public final class MessageController {
       if (vos != null) {
         messages.addAll(vos);
       }
-
       return messages;
     }
   }

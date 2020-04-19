@@ -192,6 +192,12 @@
                 <version>3.0.0-M4</version>
             </plugin>
             <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <descriptors>
@@ -224,40 +230,10 @@
                     </archive>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>com.spotify</groupId>-->
-<!--                <artifactId>docker-maven-plugin</artifactId>-->
-<!--                <version>1.2.0</version>-->
-<!--                <configuration>-->
-<!--                    <imageName>garrett528/stoker</imageName>-->
-<!--                    <forceTags>true</forceTags>-->
-<!--                    <dockerDirectory>${project.build.directory}/docker-ready</dockerDirectory>-->
-<!--                    <imageTags>-->
-<!--                        <imageTag>${project.version}</imageTag>-->
-<!--                        <imageTag>latest</imageTag>-->
-<!--                    </imageTags>-->
-<!--                    <resources>-->
-<!--                        <resource>-->
-<!--                            <targetPath>/</targetPath>-->
-<!--                            <directory>${project.build.directory}</directory>-->
-<!--                            <include>${project.build.finalName}-bin.tar.gz</include>-->
-<!--                        </resource>-->
-<!--                    </resources>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>dockerfile-maven-plugin</artifactId>
                 <version>1.4.13</version>
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>default</id>-->
-<!--                        <goals>-->
-<!--                            <goal>build</goal>-->
-<!--                            <goal>push</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
                 <executions>
                     <execution>
                         <id>tag-latest</id>
@@ -291,10 +267,10 @@
                 <configuration>
                     <repository>garrett528/stoker</repository>
                     <contextDirectory>${project.build.directory}</contextDirectory>
-<!--                    <tag>${project.version}</tag>-->
                     <buildArgs>
                         <TAR_BINARY>${project.build.finalName}-bin.tar.gz</TAR_BINARY>
                     </buildArgs>
+                    <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
                 </configuration>
             </plugin>
             <plugin>

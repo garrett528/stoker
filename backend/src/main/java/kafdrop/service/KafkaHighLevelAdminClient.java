@@ -1,6 +1,8 @@
 package kafdrop.service;
 
 import kafdrop.config.*;
+import kafdrop.exception.KafkaAdminClientException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.consumer.*;
@@ -12,8 +14,6 @@ import org.apache.kafka.common.config.*;
 import org.apache.kafka.common.config.ConfigResource.*;
 import org.apache.kafka.common.errors.*;
 import org.apache.kafka.common.resource.ResourcePatternFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.*;
 
 import javax.annotation.*;
@@ -21,10 +21,9 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.*;
 
+@Slf4j
 @Service
 public final class KafkaHighLevelAdminClient {
-  private static final Logger LOG = LoggerFactory.getLogger(KafkaHighLevelAdminClient.class);
-
   private final KafkaConfiguration kafkaConfiguration;
 
   private AdminClient adminClient;
@@ -85,7 +84,7 @@ public final class KafkaHighLevelAdminClient {
       return offsets.partitionsToOffsetAndMetadata().get();
     } catch (InterruptedException | ExecutionException e) {
       if (e.getCause() instanceof GroupAuthorizationException) {
-        LOG.info("Not authorized to view consumer group {}; skipping", groupId);
+        log.info("Not authorized to view consumer group {}; skipping", groupId);
         return Collections.emptyMap();
       } else {
         throw new KafkaAdminClientException(e);
@@ -126,9 +125,9 @@ public final class KafkaHighLevelAdminClient {
     final var creationResult = adminClient.createTopics(List.of(newTopic));
     try {
       creationResult.all().get();
-      LOG.info("Topic {} successfully created", newTopic.name());
+      log.info("Topic {} successfully created", newTopic.name());
     } catch (InterruptedException | ExecutionException e) {
-      LOG.error("Error while creating topic", e);
+      log.error("Error while creating topic", e);
       throw new KafkaAdminClientException(e);
     }
   }
@@ -155,9 +154,9 @@ public final class KafkaHighLevelAdminClient {
       for (var acl : acls) {
         newlineDelimitedAcls.append('\n').append(acl);
       }
-      LOG.info("ACLs: {}", newlineDelimitedAcls);
+      log.info("ACLs: {}", newlineDelimitedAcls);
     } catch (InterruptedException | ExecutionException e) {
-      LOG.error("Error describing ACLs", e);
+      log.error("Error describing ACLs", e);
     }
   }
 }

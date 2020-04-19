@@ -1,0 +1,28 @@
+# ignore compiled python files
+*.pyc
+
+# ignore environment settings
+*.env
+
+# ignore target files
+backend/target/*
+
+# ignore virtual env directory
+venv/*
+
+# ignore pids created during local testing
+*.pid
+
+# ignore private and public keys
+id_rsa.*
+ssh/*
+ssl/*
+
+# ignore pem files
+*.pem
+
+# ignore mac files
+*.DS_Store
+
+# ignore Intellij/Pycharm IDE folder
+.idea

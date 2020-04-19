@@ -19,36 +19,21 @@
 package kafdrop.controller;
 
 import io.swagger.annotations.*;
-import kafdrop.config.*;
-import kafdrop.exception.BrokerNotFoundException;
 import kafdrop.model.*;
 import kafdrop.service.*;
-import org.springframework.beans.factory.*;
 import org.springframework.boot.info.*;
 import org.springframework.http.*;
-import org.springframework.stereotype.*;
-import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.*;
 
-@Controller
+@RestController
 public final class ClusterController {
-  private final KafkaConfiguration kafkaConfiguration;
-
   private final KafkaMonitor kafkaMonitor;
 
-  private final BuildProperties buildProperties;
-
-  public ClusterController(KafkaConfiguration kafkaConfiguration, KafkaMonitor kafkaMonitor, ObjectProvider<BuildInfo> buildInfoProvider) {
-    this.kafkaConfiguration = kafkaConfiguration;
+  public ClusterController(KafkaMonitor kafkaMonitor) {
     this.kafkaMonitor = kafkaMonitor;
-    this.buildProperties = buildInfoProvider.stream()
-        .map(BuildInfo::getBuildProperties)
-        .findAny()
-        .orElseGet(ClusterController::blankBuildProperties);
   }
 
   private static BuildProperties blankBuildProperties() {
@@ -58,58 +43,18 @@ public final class ClusterController {
     return new BuildProperties(properties);
   }
 
-  @RequestMapping("/")
-  public String clusterInfo(Model model,
-                            @RequestParam(value = "filter", required = false) String filter) throws IOException {
-    model.addAttribute("bootstrapServers", kafkaConfiguration.getBrokerConnect());
-    model.addAttribute("buildProperties", buildProperties);
-
-    final var brokers = kafkaMonitor.getBrokers();
-    final var topics = kafkaMonitor.getTopics();
-    final var clusterSummary = kafkaMonitor.getClusterSummary(topics);
-    final var connectorStatuses = kafkaMonitor.getConnectorStatuses();
-
-    final var missingBrokerIds = clusterSummary.getExpectedBrokerIds().stream()
-        .filter(brokerId -> brokers.stream().noneMatch(b -> b.getId() == brokerId))
-        .collect(Collectors.toList());
-
-    model.addAttribute("brokers", brokers);
-    model.addAttribute("missingBrokerIds", missingBrokerIds);
-    model.addAttribute("topics", topics);
-    model.addAttribute("clusterSummary", clusterSummary);
-    model.addAttribute("connectorStatuses", connectorStatuses);
-
-    if (filter != null) {
-      model.addAttribute("filter", filter);
-    }
-
-    return "cluster-overview";
-  }
-
   @ApiOperation(value = "getCluster", notes = "Get high level broker, topic, partition, and Connect data for the Kafka cluster")
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Success", response = ClusterInfoVO.class)
   })
-  @RequestMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-  public @ResponseBody ClusterInfoVO getCluster() throws IOException {
+  @GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ClusterInfoVO getCluster() throws IOException {
     final var vo = new ClusterInfoVO();
     vo.brokers = kafkaMonitor.getBrokers();
     vo.topics = kafkaMonitor.getTopics();
     vo.summary = kafkaMonitor.getClusterSummary(vo.topics);
     vo.connectors = kafkaMonitor.getConnectorStatuses();
     return vo;
-  }
-
-  @ExceptionHandler(BrokerNotFoundException.class)
-  public String brokerNotFound(Model model) {
-    model.addAttribute("brokers", Collections.emptyList());
-    model.addAttribute("topics", Collections.emptyList());
-    return "cluster-overview";
-  }
-
-  @ResponseStatus(HttpStatus.OK)
-  @RequestMapping("/health_check")
-  public void healthCheck() {
   }
 
   /**
