@@ -5,8 +5,7 @@
 *.env
 
 # ignore target files
-backend/target/*
-*target/*
+target/*
 
 # ignore virtual env directory
 venv/*
@@ -23,7 +22,8 @@ ssl/*
 *.pem
 
 # ignore mac files
-*.DS_Store*
+.DS_Store
 
 # ignore Intellij/Pycharm IDE folder
 .idea
+
