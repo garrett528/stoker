@@ -1,0 +1,5 @@
+# ignore mac files
+.DS_Store
+
+# ignore Intellij/Pycharm IDE folder
+.idea
