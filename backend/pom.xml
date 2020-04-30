@@ -219,7 +219,7 @@
                 <!-- Build an executable JAR -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <version>3.1.0</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -266,6 +266,7 @@
                 </executions>
                 <configuration>
                     <repository>garrett528/stoker</repository>
+                    <skipDockerInfo>true</skipDockerInfo>
                     <contextDirectory>${project.build.directory}</contextDirectory>
                     <buildArgs>
                         <TAR_BINARY>${project.build.finalName}-bin.tar.gz</TAR_BINARY>

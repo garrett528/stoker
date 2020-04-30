@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
+@RequestMapping("/brokers")
 public final class BrokerController {
   private final KafkaMonitor kafkaMonitor;
 
@@ -40,7 +41,7 @@ public final class BrokerController {
       @ApiResponse(code = 200, message = "Success", response = BrokerVO.class),
       @ApiResponse(code = 404, message = "Invalid Broker ID")
   })
-  @GetMapping(path = "/broker/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public BrokerVO brokerDetailsJson(@PathVariable("id") int brokerId) {
     return kafkaMonitor.getBroker(brokerId).orElseThrow(() -> new BrokerNotFoundException("No such broker " + brokerId));
   }
@@ -49,7 +50,7 @@ public final class BrokerController {
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Success", response = BrokerVO.class)
   })
-  @GetMapping(path = "/broker", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
   public List<BrokerVO> brokerDetailsJson() {
     return kafkaMonitor.getBrokers();
   }

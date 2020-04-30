@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/acl")
 public final class AclController {
   private final KafkaMonitor kafkaMonitor;
 
@@ -40,7 +41,7 @@ public final class AclController {
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Success", response = String.class, responseContainer = "List")
   })
-  @GetMapping(path = "/acl", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
   public @ResponseBody List<AclVO> getAllTopics() {
     return kafkaMonitor.getAcls();
   }

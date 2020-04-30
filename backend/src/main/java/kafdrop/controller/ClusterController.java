@@ -19,51 +19,41 @@
 package kafdrop.controller;
 
 import io.swagger.annotations.*;
+import kafdrop.config.KafkaConfiguration;
 import kafdrop.model.*;
 import kafdrop.service.*;
-import org.springframework.boot.info.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.*;
 
 @RestController
+@RequestMapping("/cluster")
 public final class ClusterController {
+  private final KafkaConfiguration kafkaConfiguration;
+
   private final KafkaMonitor kafkaMonitor;
 
-  public ClusterController(KafkaMonitor kafkaMonitor) {
+  public ClusterController(KafkaConfiguration kafkaConfiguration, KafkaMonitor kafkaMonitor) {
+    this.kafkaConfiguration = kafkaConfiguration;
     this.kafkaMonitor = kafkaMonitor;
   }
 
-  private static BuildProperties blankBuildProperties() {
-    final var properties = new Properties();
-    properties.setProperty("version", "3.x");
-    properties.setProperty("time", String.valueOf(System.currentTimeMillis()));
-    return new BuildProperties(properties);
-  }
-
-  @ApiOperation(value = "getCluster", notes = "Get high level broker, topic, partition, and Connect data for the Kafka cluster")
+  @ApiOperation(value = "getClusterSummary", notes = "Get high level topic and partition data for the Kafka cluster")
   @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "Success", response = ClusterInfoVO.class)
+      @ApiResponse(code = 200, message = "Success", response = ClusterSummaryVO.class)
   })
-  @GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ClusterInfoVO getCluster() throws IOException {
-    final var vo = new ClusterInfoVO();
-    vo.brokers = kafkaMonitor.getBrokers();
-    vo.topics = kafkaMonitor.getTopics();
-    vo.summary = kafkaMonitor.getClusterSummary(vo.topics);
-    vo.connectors = kafkaMonitor.getConnectorStatuses();
-    return vo;
+  @GetMapping(path = "/summary", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ClusterSummaryVO getClusterSummary() throws IOException {
+    return kafkaMonitor.getClusterSummary(kafkaMonitor.getTopics());
   }
 
-  /**
-   * Simple DTO to encapsulate the cluster state.
-   */
-  public static final class ClusterInfoVO {
-    ClusterSummaryVO summary;
-    List<BrokerVO> brokers;
-    List<TopicVO> topics;
-    List<ConnectorStatusVO> connectors;
+  @ApiOperation(value = "getBrokerConnect", notes = "Get broker connection string")
+  @ApiResponses(value = {
+          @ApiResponse(code = 200, message = "Success", response = String.class)
+  })
+  @GetMapping(path = "/brokerConnect", produces = MediaType.APPLICATION_JSON_VALUE)
+  public String getBrokerConnect() throws IOException {
+    return kafkaConfiguration.getBrokerConnect();
   }
 }

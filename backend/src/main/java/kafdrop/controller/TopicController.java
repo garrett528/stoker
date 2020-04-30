@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("/topic")
+@RequestMapping("/topics")
 public final class TopicController {
   private final KafkaMonitor kafkaMonitor;
 
@@ -52,7 +52,7 @@ public final class TopicController {
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Success", response = TopicVO.class, responseContainer = "List")
   })
-  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
   public List<TopicVO> getAllTopics() {
     return kafkaMonitor.getTopics();
   }
@@ -78,7 +78,7 @@ public final class TopicController {
       @ApiResponse(code = 201, message = "Success", response = ResponseEntity.class),
       @ApiResponse(code = 400, message = "Error", response = ResponseEntity.class)
   })
-  @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+  @RequestMapping(path = "/create", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
   public ResponseEntity<String> createTopic(@RequestBody CreateTopicVO createTopicVO, Model model) {
       try {
         kafkaMonitor.createTopic(createTopicVO);

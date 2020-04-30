@@ -26,7 +26,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/consumer")
+@RequestMapping("/consumers")
 public final class ConsumerController {
   private final KafkaMonitor kafkaMonitor;
 

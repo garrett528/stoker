@@ -55,6 +55,7 @@ import kafdrop.util.MessageFormat;
 import kafdrop.util.ProtobufMessageDeserializer;
 
 @RestController
+@RequestMapping("/messages")
 public final class MessageController {
   private final KafkaMonitor kafkaMonitor;
 
@@ -79,7 +80,7 @@ public final class MessageController {
    * @param topicName Name of topic
    * @return View for seeing all messages in a topic sorted by timestamp.
    */
-  @GetMapping("/topic/{name:.+}/allmessages")
+  @GetMapping("/topic/{name:.+}/all")
   @ApiOperation(value = "getAllMessages", notes = "Get all topic messages")
   @ApiResponses(value = {
           @ApiResponse(code = 200, message = "Success", response = List.class),
