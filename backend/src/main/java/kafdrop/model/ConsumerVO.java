@@ -19,16 +19,19 @@
 package kafdrop.model;
 
 import org.apache.commons.lang3.*;
+import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 
 import java.util.*;
 
 public final class ConsumerVO implements Comparable<ConsumerVO> {
   private final String groupId;
   private final Map<String, ConsumerTopicVO> topics = new TreeMap<>();
+  private final String state;
 
-  public ConsumerVO(String groupId) {
+  public ConsumerVO(String groupId, String state) {
     Validate.notEmpty("groupId is required");
     this.groupId = groupId;
+    this.state = state;
   }
 
   public String getGroupId() {
@@ -45,6 +48,10 @@ public final class ConsumerVO implements Comparable<ConsumerVO> {
 
   public Collection<ConsumerTopicVO> getTopics() {
     return topics.values();
+  }
+
+  public String getState() {
+    return state;
   }
 
   @Override

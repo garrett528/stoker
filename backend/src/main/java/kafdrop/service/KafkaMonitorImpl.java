@@ -202,9 +202,16 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
   public List<ConsumerVO> getConsumers(Collection<TopicVO> topicVos) {
     final var topics = topicVos.stream().map(TopicVO::getName).collect(Collectors.toSet());
     final var consumerGroupOffsets = getConsumerOffsets(topics);
+    final var consumerGroups = highLevelAdminClient.listConsumerGroups();
+    final var consumerGroupStates = highLevelAdminClient.getConsumerGroupState(consumerGroups);
     LOG.debug("consumerGroupOffsets: {}", consumerGroupOffsets);
     LOG.debug("topicVos: {}", topicVos);
-    return convert(consumerGroupOffsets, topicVos);
+    return convert(consumerGroupOffsets, topicVos, consumerGroupStates);
+  }
+
+  @Override
+  public void deleteConsumerGroup(Collection<String> groupIds) {
+    highLevelAdminClient.deleteConsumerGroups(groupIds);
   }
 
   @Override
@@ -229,7 +236,7 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
     return aclVos;
   }
 
-  private static List<ConsumerVO> convert(List<ConsumerGroupOffsets> consumerGroupOffsets, Collection<TopicVO> topicVos) {
+  private static List<ConsumerVO> convert(List<ConsumerGroupOffsets> consumerGroupOffsets, Collection<TopicVO> topicVos, Map<String, String> consumerGroupStates) {
     final var topicVoMap = topicVos.stream().collect(Collectors.toMap(TopicVO::getName, Function.identity()));
     final var groupTopicPartitionOffsetMap = new TreeMap<String, Map<String, Map<Integer, Long>>>();
 
@@ -250,7 +257,8 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
     final var consumerVos = new ArrayList<ConsumerVO>(consumerGroupOffsets.size());
     for (var groupTopicPartitionOffset : groupTopicPartitionOffsetMap.entrySet()) {
       final var groupId = groupTopicPartitionOffset.getKey();
-      final var consumerVo = new ConsumerVO(groupId);
+      final var groupState = consumerGroupStates.get(groupId);
+      final var consumerVo = new ConsumerVO(groupId, groupState);
       consumerVos.add(consumerVo);
 
       for (var topicPartitionOffset : groupTopicPartitionOffset.getValue().entrySet()) {
@@ -307,6 +315,7 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
 
   private List<ConsumerGroupOffsets> getConsumerOffsets(Set<String> topics) {
     final var consumerGroups = highLevelAdminClient.listConsumerGroups();
+
     return consumerGroups.stream()
         .map(this::resolveOffsets)
         .map(offsets -> offsets.forTopics(topics))

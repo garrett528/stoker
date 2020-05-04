@@ -56,4 +56,6 @@ public interface KafkaMonitor {
   List<AclVO> getAcls();
 
   List<ConnectorStatusVO> getConnectorStatuses() throws IOException;
+
+  void deleteConsumerGroup(Collection<String> groupIds);
 }

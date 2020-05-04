@@ -25,6 +25,8 @@ import kafdrop.service.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+
 @RestController
 @RequestMapping("/consumers")
 public final class ConsumerController {
@@ -47,5 +49,16 @@ public final class ConsumerController {
         .filter(c -> c.getGroupId().equals(groupId))
         .findAny();
     return consumer.orElseThrow(() -> new ConsumerNotFoundException(groupId));
+  }
+
+  @ApiOperation(value = "deleteConsumerGroup", notes = "Deletes a consumer group(s)")
+  @ApiResponses(value = {
+          @ApiResponse(code = 200, message = "Success", response = ResponseEntity.class),
+          @ApiResponse(code = 404, message = "Invalid consumer group")
+  })
+  @PostMapping(path = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<String> deleteConsumerGroup(@RequestBody Collection<String> groupIds) {
+    kafkaMonitor.deleteConsumerGroup(groupIds);
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 }

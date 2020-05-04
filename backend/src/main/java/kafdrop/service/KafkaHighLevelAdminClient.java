@@ -92,6 +92,24 @@ public final class KafkaHighLevelAdminClient {
     }
   }
 
+  Map<String, String> getConsumerGroupState(Collection<String> groupIds) {
+    final var consumerGroupState = adminClient.describeConsumerGroups(groupIds);
+    try {
+      var groupDescriptions = consumerGroupState.all().get();
+      Map<String, String> groupState = new HashMap<>();
+      for (ConsumerGroupDescription description : groupDescriptions.values()) {
+          groupState.put(description.groupId(), description.state().toString());
+      }
+      return groupState;
+    } catch (InterruptedException | ExecutionException e) {
+      throw new KafkaAdminClientException(e);
+    }
+  }
+
+  void deleteConsumerGroups(Collection<String> groupIds) {
+    adminClient.deleteConsumerGroups(groupIds);
+  }
+
   Map<String, Config> describeTopicConfigs(Set<String> topicNames) {
     final var resources = topicNames.stream()
         .map(topic -> new ConfigResource(Type.TOPIC, topic))
