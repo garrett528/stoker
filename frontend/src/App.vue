@@ -1,19 +1,22 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <router-view></router-view>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+  import { mapActions } from "vuex";
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
+  export default {
+    name: 'App',
+    methods: {
+      ...mapActions(['getClusterSummary', 'getBrokerConnect', 'getBrokers', 'getTopics'])
+    },
+    created() {
+      this.getClusterSummary();
+      this.getBrokerConnect();
+      this.getBrokers();
+      this.getTopics();
+    }
   }
-}
 </script>
 
 <style>
