@@ -44,12 +44,9 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
 
   private final KafkaHighLevelAdminClient highLevelAdminClient;
 
-  private final KafkaConnectClient kafkaConnectClient;
-
-  public KafkaMonitorImpl(KafkaHighLevelConsumer highLevelConsumer, KafkaHighLevelAdminClient highLevelAdminClient, KafkaConnectClient kafkaConnectClient) {
+  public KafkaMonitorImpl(KafkaHighLevelConsumer highLevelConsumer, KafkaHighLevelAdminClient highLevelAdminClient) {
     this.highLevelConsumer = highLevelConsumer;
     this.highLevelAdminClient = highLevelAdminClient;
-    this.kafkaConnectClient = kafkaConnectClient;
   }
 
   @Override
@@ -321,17 +318,5 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
         .map(offsets -> offsets.forTopics(topics))
         .filter(not(ConsumerGroupOffsets::isEmpty))
         .collect(Collectors.toList());
-  }
-
-  @Override
-  public List<ConnectorStatusVO> getConnectorStatuses() {
-    var connectStatuses = new ArrayList<ConnectorStatusVO>();
-    final var connectorList = kafkaConnectClient.getAllConnectors();
-
-    for (JsonElement connector : connectorList) {
-      final var connectSummary = kafkaConnectClient.getConnectorStatus(connector.getAsString());
-      connectStatuses.add(connectSummary);
-    }
-    return connectStatuses;
   }
 }

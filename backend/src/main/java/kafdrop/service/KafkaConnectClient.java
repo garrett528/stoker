@@ -4,17 +4,21 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import kafdrop.config.KafkaConnectConfiguration;
+import kafdrop.exception.KafkaAdminClientException;
 import kafdrop.exception.KafkaConnectClientException;
 import kafdrop.model.ConnectorStatusVO;
 import kafdrop.model.ConnectorVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHttpResponse;
@@ -74,21 +78,22 @@ public class KafkaConnectClient {
     }
 
     public ConnectorVO getConnector(String name) {
-        final var httpClient = createClient();
+        DefaultHttpRequestRetryHandler retryhandler = new DefaultHttpRequestRetryHandler(10, true);
+        final var httpClient = HttpClientBuilder.create().setRetryHandler(retryhandler).build();
         final var getConnector = new HttpGet(connectHost.toURI() + "/connectors/" + name);
+        CloseableHttpResponse res;
 
         try {
             System.out.println("Getting connector information for: " + name);
-            var res = httpClient.execute(getConnector);
+            res = httpClient.execute(getConnector);
             var connector = jsonParser.parse(EntityUtils.toString(res.getEntity(), StandardCharsets.UTF_8)).getAsJsonObject();
             var connectorName = connector.get("name").getAsString();
             var configJson = connector.get("config").getAsJsonObject();
             var tasks = connector.get("tasks").getAsJsonArray();
-
             return new ConnectorVO(connectorName, configJson, tasks);
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Failed to fetch connector!");
-            throw new KafkaConnectClientException(e);
+            throw new KafkaAdminClientException(e);
         }
     }
 
