@@ -1,23 +1,30 @@
 <template>
-    <div class="pb-2 mt-5 mb-4 border-bottom border-secondary">
+    <div class="pb-2 mt-5 mb-4">
         <div class="container">
-            <div class="container-fluid pl-0">
-                <div id="stoker-header-title-line" class="row">
-                    <div id="stoker-logo" class="col-md-1">
-                        <a href="/"><img alt="logo" height="120" src="../assets/logo_transparent.png"/></a>
-                    </div>
-                    <div id="title" class="col-md-10">
-                        <h1 class="mb-0 display-1">
-                            <a id="logo-ref" class="text-muted" href="/">Stoker</a>
-                        </h1>
-                    </div>
-                    <div id="stoker-github-star" class="col-md-1">
-                        <a class="github-button" href="https://github.com/garrett528/stoker" data-show-count="false"
-                           aria-label="Star Stoker on GitHub" data-size="large">Star</a>
-                    </div>
+            <div class="container-fluid pl-0 mb-3">
+                <div id="stoker-logo" class="text-center">
+                    <router-link :to="'/'"><img alt="logo" height="120" src="../assets/logo_transparent.png"/></router-link>
                 </div>
             </div>
         </div>
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+            <router-link id="navbar-brand" class="navbar-brand" :to="'/'" data-ol-has-click-handler="">Stoker</router-link>
+
+            <div class="navbar-collapse" id="navbarColor01">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <router-link class="nav-link" :to="'/'">Home</router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link class="nav-link" :to="'/kafkaConnect'">Kafka Connect</router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link class="nav-link" :to="'/schemaRegistry'">Schema Registry</router-link>
+                    </li>
+                </ul>
+            </div>
+        </nav>
     </div>
 </template>
 
@@ -38,7 +45,7 @@
     height: 10em;
 }
 
-#logo-ref {
+#navbar-brand {
     font-family: 'Pacifico',sans-serif;
     text-decoration: none;
 }

@@ -9,9 +9,12 @@ export default new Vuex.Store({
         clusterSummary: {},
         brokerConnect: '',
         brokers: [],
-        topics: []
+        topics: [],
+        connectorStatuses: []
     },
-    getters: {},
+    getters: {
+        connectorStatuses: state => JSON.parse(JSON.stringify(state.connectorStatuses))
+    },
     mutations: {
         setClusterSummary(state, summary) {
             state.clusterSummary = summary;
@@ -24,6 +27,9 @@ export default new Vuex.Store({
         },
         setTopics(state, topics) {
             state.topics = topics;
+        },
+        setConnectorStatuses(state, connectorStatuses) {
+            state.connectorStatuses = connectorStatuses;
         }
     },
     actions: {
@@ -58,6 +64,16 @@ export default new Vuex.Store({
             axios.get("/topics/")
                 .then(response => {
                     commit('setTopics', response.data)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
+        getConnectorStatuses({ commit }) {
+            axios.get("/connect/connectorStatuses")
+                .then(response => {
+                    commit('setConnectorStatuses', response.data);
+                    console.log(response.data);
                 })
                 .catch(error => {
                     console.log(error)

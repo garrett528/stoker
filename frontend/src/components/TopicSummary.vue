@@ -1,13 +1,8 @@
 <template>
     <div id="container" class="container-fluid pl-5 pr-5">
         <div id="header-container" class="m-0">
-            <div id="topic-header" class="float-left">
-                <h3 class="text-white text-left"><i class="fa fa-database"></i> Topic Overview
-                <span class="h6"><router-link class="text-light" :to="'/acl'"><i class="fa fa-lock"></i> ACLs</router-link></span>
-                </h3>
-            </div>
-            <div id="new-topic-button-container" class="float-right">
-                <router-link class="btn btn-outline-light text-light" :to="'/topic/create'"><i class="fa fa-plus"></i>&nbsp;&nbsp;New Topic</router-link>
+            <div id="topic-header">
+                <h3 class="text-white text-left"><i class="fa fa-database"></i> Topic Overview</h3>
             </div>
         </div>
         <div id="topic-overview">
