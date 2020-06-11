@@ -6,7 +6,15 @@
             <div id="grid-container" class="row">
 
                 <div id="partition-detail" class="col-8">
-                    <h4 class="text-white text-left">Partition Detail</h4>
+                    <div id="partition-detail-header-container" class="float-left">
+                        <h4 class="text-white text-left">Partition Detail</h4>
+                    </div>
+                    <div id="view-messages-button-container" class="float-right">
+                        <router-link class="text-info" :to="'/topics/' + name + '/messages/'">
+                            <button type="button" class="btn btn-dark mb-2"><i class="fa fa-eye"></i>&nbsp;&nbsp;View Messages</button>
+                        </router-link>
+                    </div>
+
                     <table class="table table-bordered text-left mt-2">
                         <thead>
                         <tr>

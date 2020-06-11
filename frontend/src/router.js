@@ -2,6 +2,7 @@ import Vue from "vue";
 import Router from "vue-router";
 import Home from "./views/Home.vue";
 import TopicDetail from "@/views/TopicDetail";
+import TopicMessages from "@/views/TopicMessages";
 import KafkaConnect from "@/views/KafkaConnect";
 import ConnectorDetail from "@/views/ConnectorDetail";
 
@@ -19,6 +20,12 @@ export default new Router({
             path: "/topics/:name",
             name: "topicDetail",
             component: TopicDetail,
+            props: true
+        },
+        {
+            path: "/topics/:name/messages",
+            name: "topicMessages",
+            component: TopicMessages,
             props: true
         },
         {
