@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.garrett528.stoker</groupId>
-    <artifactId>stoker</artifactId>
-    <version>0.1.0</version>
+    <artifactId>stoker-backend</artifactId>
+    <version>0.2.0</version>
 
     <description>For when you have a Kafka cluster to monitor</description>
 
@@ -196,6 +196,7 @@
                 <configuration>
                     <skip>true</skip>
                 </configuration>
+                <version>2.7</version>
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -265,7 +266,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <repository>garrett528/stoker</repository>
+                    <repository>garrett528/stoker-backend</repository>
                     <skipDockerInfo>true</skipDockerInfo>
                     <contextDirectory>${project.build.directory}</contextDirectory>
                     <buildArgs>

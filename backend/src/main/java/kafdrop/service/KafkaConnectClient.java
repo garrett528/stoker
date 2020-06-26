@@ -54,7 +54,7 @@ public class KafkaConnectClient {
     @PostConstruct
     private void createHost() {
         if (kafkaConnectProperties.getConnect() != null) {
-            connectHost = new HttpHost(kafkaConnectProperties.getConnect(), kafkaConnectProperties.getConnectPort());
+            connectHost = new HttpHost(kafkaConnectProperties.getConnect(), kafkaConnectProperties.getPort());
         }
     }
 

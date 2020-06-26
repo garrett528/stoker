@@ -4,29 +4,27 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+
 @Configuration
 public class KafkaConnectConfiguration {
     @Component
     @ConfigurationProperties(prefix = "kafkaconnect")
     public static final class KafkaConnectProperties {
-        private String connect;
-
-        private int connectPort = 80;
+        private URL connectURL;
 
         public String getConnect() {
-            return connect;
+            return connectURL.getHost();
         }
 
-        public void setConnect(String connect) {
-            this.connect = connect;
+        public void setConnect(String connect) throws MalformedURLException {
+            this.connectURL = new URL(connect);
         }
 
-        public int getConnectPort() {
-            return connectPort;
-        }
-
-        public void setConnectPort(int connectPort) {
-            this.connectPort = connectPort;
+        public int getPort() {
+            return connectURL.getPort();
         }
     }
 }

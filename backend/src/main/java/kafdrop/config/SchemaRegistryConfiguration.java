@@ -1,12 +1,11 @@
 package kafdrop.config;
 
-import org.springframework.boot.context.properties.*;
-import org.springframework.context.annotation.*;
-import org.springframework.stereotype.*;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.regex.*;
-import java.util.stream.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 @Configuration
@@ -14,28 +13,27 @@ public class SchemaRegistryConfiguration {
   @Component
   @ConfigurationProperties(prefix = "schemaregistry")
   public static final class SchemaRegistryProperties {
-    static final Pattern CONNECT_SEPARATOR = Pattern.compile("\\s*,\\s*");
-
-    private String connect;
     private String auth;
+    private URL connectURL;
 
     public String getConnect() {
-      return connect;
+      return connectURL.toString();
     }
 
-    public void setConnect(String connect) {
-      this.connect = connect;
+    public void setConnect(String connect) throws MalformedURLException {
+      this.connectURL = new URL(connect);
+    }
+
+    public String getHost() {
+      return connectURL.getHost();
+    }
+
+    public int getPort() {
+      return connectURL.getPort();
     }
 
     public String getAuth() { return auth; }
 
     public void setAuth(String auth) { this.auth = auth; }
-
-    public List<String> getConnectList() {
-      return CONNECT_SEPARATOR.splitAsStream(this.connect)
-          .map(String::trim)
-          .filter(s -> s.length() > 0)
-          .collect(Collectors.toList());
-    }
   }
 }
